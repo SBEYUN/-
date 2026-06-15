@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Шифратор Цезаря | Проект студенток группы ИСП-41</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Times New Roman', serif;
+            min-height: 100vh;
+            background: url('fon.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .overlay {
+            background: rgba(248, 240, 220, 0.88);
+            border-radius: 12px;
+            padding: 32px 35px;
+            max-width: 550px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(210, 180, 140, 0.5);
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #7a5a4b;
+            text-align: center;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            font-family: 'Times New Roman', serif;
+        }
+
+        .sub {
+            text-align: center;
+            color: #9b7b5c;
+            font-size: 14px;
+            margin-bottom: 28px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #dccfaf;
+        }
+
+        .field {
+            margin-bottom: 22px;
+        }
+
+        label {
+            display: block;
+            color: #6b4c3b;
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .input-with-clear {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 10px 35px 10px 12px;
+            background: #fffef7;
+            border: 1px solid #d4bc9a;
+            border-radius: 6px;
+            font-size: 15px;
+            color: #3e2c21;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            outline: none;
+        }
+
+        textarea:focus, input:focus {
+            border-color: #b28b5e;
+            background: #ffffff;
+        }
+
+        .clear-btn {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #e0cfba;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #5a3e2a;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .clear-btn:hover {
+            background: #c9b28b;
+            color: #2f241a;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 12px;
+            background: #fffef7;
+            border: 1px solid #d4bc9a;
+            border-radius: 6px;
+            font-size: 15px;
+            color: #3e2c21;
+            font-family: 'Courier New', monospace;
+            outline: none;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            margin: 20px 0 20px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            flex: 1;
+            padding: 10px 12px;
+            font-size: 15px;
+            font-weight: 500;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background: #dcc9af;
+            color: #4a3525;
+            font-family: inherit;
+            transition: 0.08s linear;
+        }
+
+        button:first-child {
+            background: #cfb991;
+        }
+
+        button:hover {
+            background: #c4a87c;
+            color: #2f231b;
+        }
+
+        .result-block {
+            background: rgba(245, 235, 210, 0.9);
+            border-radius: 6px;
+            padding: 14px;
+            margin-top: 10px;
+            border-left: 3px solid #c8aa7a;
+        }
+
+        .result-title {
+            color: #8b6946;
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        #result {
+            color: #3b2c1f;
+            font-size: 16px;
+            word-break: break-word;
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+            min-height: 50px;
+            margin-bottom: 12px;
+        }
+
+        .copy-section {
+            margin-top: 15px;
+        }
+
+        .copy-btn {
+            width: 100%;
+            background: #cfb991;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #4a3525;
+            font-weight: 500;
+            transition: 0.08s linear;
+        }
+
+        .copy-btn:hover {
+            background: #b89a6e;
+            color: #2f231b;
+        }
+
+        .copy-message {
+            font-size: 10px;
+            color: #8b6946;
+            margin-top: 8px;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .copy-message.show {
+            opacity: 1;
+        }
+
+        .footer {
+            margin-top: 22px;
+            font-size: 11px;
+            text-align: center;
+            color: #a88e6a;
+            border-top: 1px solid #d9c8aa;
+            padding-top: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <h1>Шифратор Цезаря</h1>
+        <div class="sub">Проект по дисциплине «Основы программирования Python»</div>
+
+        <div class="field">
+            <label>Текст для преобразования:</label>
+            <div class="input-with-clear">
+                <textarea id="inputText" rows="3" placeholder="Введите текст..."></textarea>
+                <button class="clear-btn" id="clearInputBtn" title="Очистить">✖</button>
+            </div>
+        </div>
+
+        <div class="field">
+            <label>Введите число для сдвига:</label>
+            <input type="number" id="shiftValue" value="3">
+        </div>
+
+        <div class="buttons">
+            <button id="encryptBtn">Зашифровать</button>
+            <button id="decryptBtn">Расшифровать</button>
+            <button id="autoBtn">Авторежим</button>
+        </div>
+
+        <div class="result-block">
+            <div class="result-title">Результат:</div>
+            <div id="result"></div>
+        </div>
+
+        <div class="copy-section">
+            <button class="copy-btn" id="copyBtn">Скопировать</button>
+            <div id="copyMessage" class="copy-message">Скопировано!</div>
+        </div>
+
+        <div class="footer">
+            ГБПОУ МО "Физико-технический колледж" Радкевич Арина и Горячева Дарья
+        </div>
+    </div>
+
+    <script>
+        const LATIN_LOWER = 'abcdefghijklmnopqrstuvwxyz';
+        const LATIN_UPPER = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const RUS_LOWER = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюя';
+        const RUS_UPPER = 'АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ';
+
+        function shiftChar(ch, shiftAmount) {
+            if (LATIN_LOWER.includes(ch)) {
+                let idx = LATIN_LOWER.indexOf(ch);
+                let newIdx = (idx + shiftAmount) % 26;
+                if (newIdx < 0) newIdx += 26;
+                return LATIN_LOWER[newIdx];
+            }
+            if (LATIN_UPPER.includes(ch)) {
+                let idx = LATIN_UPPER.indexOf(ch);
+                let newIdx = (idx + shiftAmount) % 26;
+                if (newIdx < 0) newIdx += 26;
+                return LATIN_UPPER[newIdx];
+            }
+            if (RUS_LOWER.includes(ch)) {
+                let idx = RUS_LOWER.indexOf(ch);
+                let newIdx = (idx + shiftAmount) % 33;
+                if (newIdx < 0) newIdx += 33;
+                return RUS_LOWER[newIdx];
+            }
+            if (RUS_UPPER.includes(ch)) {
+                let idx = RUS_UPPER.indexOf(ch);
+                let newIdx = (idx + shiftAmount) % 33;
+                if (newIdx < 0) newIdx += 33;
+                return RUS_UPPER[newIdx];
+            }
+            return ch;
+        }
+
+        function caesarTransform(text, shift, isDecrypt = false) {
+            if (!text) return '';
+            let effectiveShift = isDecrypt ? -shift : shift;
+            let result = '';
+            for (let i = 0; i < text.length; i++) {
+                result += shiftChar(text[i], effectiveShift);
+            }
+            return result;
+        }
+
+        function isTextLikelyPlain(text) {
+            if (!text || text.length < 3) return true;
+            
+            const vowelsRus = 'аеёиоуыэюяАЕЁИОУЫЭЮЯ';
+            const vowelsEng = 'aeiouAEIOU';
+            let totalLetters = 0;
+            let vowelCount = 0;
+            const allLetters = LATIN_LOWER + LATIN_UPPER + RUS_LOWER + RUS_UPPER;
+            
+            for (let ch of text) {
+                if (allLetters.includes(ch)) {
+                    totalLetters++;
+                    if (vowelsRus.includes(ch) || vowelsEng.includes(ch)) {
+                        vowelCount++;
+                    }
+                }
+            }
+            if (totalLetters === 0) return true;
+            let vowelRatio = vowelCount / totalLetters;
+            return (vowelRatio > 0.25 && vowelRatio < 0.55);
+        }
+
+        function autoMode(text, shift) {
+            if (!text) return '';
+            const encrypted = caesarTransform(text, shift, false);
+            const decrypted = caesarTransform(text, shift, true);
+            
+            const scoreOriginal = isTextLikelyPlain(text) ? 2 : 0;
+            const scoreDecrypted = isTextLikelyPlain(decrypted) ? 2 : 0;
+            
+            if (scoreDecrypted > scoreOriginal) {
+                return decrypted;
+            }
+            return encrypted;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const inputField = document.getElementById('inputText');
+            const shiftField = document.getElementById('shiftValue');
+            const encryptBtn = document.getElementById('encryptBtn');
+            const decryptBtn = document.getElementById('decryptBtn');
+            const autoBtn = document.getElementById('autoBtn');
+            const resultDiv = document.getElementById('result');
+            const copyBtn = document.getElementById('copyBtn');
+            const copyMessage = document.getElementById('copyMessage');
+            const clearInputBtn = document.getElementById('clearInputBtn');
+
+            function clearResultIfInputEmpty() {
+                if (inputField.value === '') {
+                    resultDiv.innerHTML = '';
+                }
+            }
+
+            encryptBtn.addEventListener('click', () => {
+                const text = inputField.value;
+                let shift = parseInt(shiftField.value);
+                if (isNaN(shift)) {
+                    resultDiv.innerHTML = "Ошибка: сдвиг должен быть числом";
+                    return;
+                }
+                resultDiv.innerHTML = caesarTransform(text, shift, false);
+            });
+
+            decryptBtn.addEventListener('click', () => {
+                const text = inputField.value;
+                let shift = parseInt(shiftField.value);
+                if (isNaN(shift)) {
+                    resultDiv.innerHTML = "Ошибка: сдвиг должен быть числом";
+                    return;
+                }
+                resultDiv.innerHTML = caesarTransform(text, shift, true);
+            });
+
+            autoBtn.addEventListener('click', () => {
+                const text = inputField.value;
+                let shift = parseInt(shiftField.value);
+                if (isNaN(shift)) {
+                    resultDiv.innerHTML = "Ошибка: сдвиг должен быть числом";
+                    return;
+                }
+                resultDiv.innerHTML = autoMode(text, shift);
+            });
+
+            copyBtn.addEventListener('click', () => {
+                const textToCopy = resultDiv.innerText;
+                if (textToCopy === "" || textToCopy === "Ошибка: сдвиг должен быть числом") {
+                    return;
+                }
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    copyMessage.classList.add('show');
+                    setTimeout(() => {
+                        copyMessage.classList.remove('show');
+                    }, 1500);
+                }).catch(() => {
+                    copyMessage.innerText = "Не удалось скопировать";
+                    copyMessage.classList.add('show');
+                    setTimeout(() => {
+                        copyMessage.classList.remove('show');
+                        copyMessage.innerText = "Скопировано!";
+                    }, 1500);
+                });
+            });
+
+            clearInputBtn.addEventListener('click', () => {
+                inputField.value = '';
+                resultDiv.innerHTML = '';
+                inputField.focus();
+            });
+
+            inputField.addEventListener('input', clearResultIfInputEmpty);
+        });
+    </script>
+</body>
+</html>
